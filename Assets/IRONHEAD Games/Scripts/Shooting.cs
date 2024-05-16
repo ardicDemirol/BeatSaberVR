@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Shooting : MonoBehaviour
 {
-   
+
     public float fireRate = 0.1f;
     public GameObject bulletPrefab;
 
@@ -12,9 +10,13 @@ public class Shooting : MonoBehaviour
 
     public Transform nozzleTransform;
 
- 
+
     public Animator gunAnimator;
-    
+
+    public OVRInput.Button ShootButton;
+
+    public GameObject slicer;
+
 
     // Update is called once per frame
     void Update()
@@ -22,12 +24,12 @@ public class Shooting : MonoBehaviour
         //elapsed time
         elapsedTime += Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || OVRInput.GetDown(ShootButton, OVRInput.Controller.LTouch))
         {
             if (elapsedTime > fireRate)
             {
                 Shoot();
-                
+
                 elapsedTime = 0;
             }
         }
@@ -43,14 +45,16 @@ public class Shooting : MonoBehaviour
         //Play animation
         gunAnimator.SetTrigger("Fire");
 
-      
+
         //Create the bullet
         GameObject bulletGameobject = Instantiate(bulletPrefab, nozzleTransform.position, Quaternion.Euler(0, 0, 0));
         bulletGameobject.transform.forward = nozzleTransform.forward;
 
+        Physics.IgnoreCollision(bulletGameobject.GetComponent<Collider>(), slicer.GetComponent<Collider>());
+
     }
 
-   
+
 
 
 }

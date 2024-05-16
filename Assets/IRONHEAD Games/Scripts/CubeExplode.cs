@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CubeExplode : MonoBehaviour
 {
@@ -20,13 +18,18 @@ public class CubeExplode : MonoBehaviour
         shatteredObject.SetActive(true);
         var shatterAnimation = shatteredObject.GetComponent<Animation>().Play();
 
+        OVRInput.SetControllerVibration(0.5f, 0.5f, OVRInput.Controller.LTouch);
 
-        Destroy(shatteredObject,1);
+        ScoreManager.instance.AddScore(ScorePoints.GUNCUBE_SCOREPOINT);
+
+        Destroy(shatteredObject, 1);
+
+
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Bullet")
+        if (other.CompareTag("Bullet"))
         {
             IsShot();
         }

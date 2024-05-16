@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EzySlice;
 using UnityEngine;
-using EzySlice;
 public class Slicer : MonoBehaviour
 {
     public Material MaterialAfterSlice;
@@ -10,23 +8,29 @@ public class Slicer : MonoBehaviour
     public bool isTouched;
 
     private void Update()
-    {     
+    {
         if (isTouched == true)
         {
             isTouched = false;
             Collider[] objectsToBeSliced = Physics.OverlapBox(transform.position, new Vector3(1, 0.1f, 0.1f), transform.rotation, sliceMask);
             foreach (Collider objectToBeSliced in objectsToBeSliced)
             {
-              
+
                 SlicedHull slicedObject = SliceObject(objectToBeSliced.gameObject, MaterialAfterSlice);
 
                 GameObject upperHullGameobject = slicedObject.CreateUpperHull(objectToBeSliced.gameObject, MaterialAfterSlice);
                 GameObject lowerHullGameobject = slicedObject.CreateLowerHull(objectToBeSliced.gameObject, MaterialAfterSlice);
 
-             
+
+                OVRInput.SetControllerVibration(0.5f, 0.5f, OVRInput.Controller.RTouch);
+
+                ScoreManager.instance.AddScore(ScorePoints.SWORDCUBE_SCOREPOINT);
+
+
+
                 upperHullGameobject.transform.position = objectToBeSliced.transform.position;
                 lowerHullGameobject.transform.position = objectToBeSliced.transform.position;
-               
+
 
                 MakeItPhysical(upperHullGameobject, objectToBeSliced.gameObject.GetComponent<Rigidbody>().velocity);
                 MakeItPhysical(lowerHullGameobject, objectToBeSliced.gameObject.GetComponent<Rigidbody>().velocity);
@@ -42,16 +46,16 @@ public class Slicer : MonoBehaviour
         obj.AddComponent<Rigidbody>();
         obj.GetComponent<Rigidbody>().velocity = -_velocity;
 
-        int randomNumberX = Random.Range(0,2);
+        int randomNumberX = Random.Range(0, 2);
         int randomNumberY = Random.Range(0, 2);
         int randomNumberZ = Random.Range(0, 2);
 
-        obj.GetComponent<Rigidbody>().AddForce(3*new Vector3(randomNumberX,randomNumberY,randomNumberZ),ForceMode.Impulse);       
+        obj.GetComponent<Rigidbody>().AddForce(3 * new Vector3(randomNumberX, randomNumberY, randomNumberZ), ForceMode.Impulse);
         obj.AddComponent<DestroyAfterSeconds>();
 
     }
 
-   
+
 
     private SlicedHull SliceObject(GameObject obj, Material crossSectionMaterial = null)
     {
